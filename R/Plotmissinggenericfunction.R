@@ -15,6 +15,7 @@
 #' ggplot_missing(X,reordonne=FALSE)createallautomaticRMD(schema="SDP")
  
 ggplot_missing <- function(x,reordonne=FALSE){
+  if(!is.data.frame(X)){X<-as.data.frame(X)}
   rownames(x)<-NULL
   as.data.frame((x %>% 
     is.na))->x
@@ -55,6 +56,7 @@ ggplot_missing <- function(x,reordonne=FALSE){
 
 
 ggplot_missing2 <- function(X,reordonne=TRUE,keep=NULL){
+  if(!is.data.frame(X)){X<-as.data.frame(X)}
   gg_color_hue <- function(n) {
     hues = seq(15, 375, length = n + 1)
     hcl(h = hues, l = 65, c = 100)[1:n]

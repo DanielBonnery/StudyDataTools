@@ -5,9 +5,8 @@
 #' @param X a data frame
 #' @param info2 a data frame with two variables named c("COLUMN_NAME","CONSTRAINT_TYPE")
 #' @return a data frame
-#' @examples
-#' 
-#' 
+#' @example
+#' data(churn,package="AUC");missing.summary(churn)
 
 
 missing.summary<-function(X,info2=NULL){
