@@ -10,6 +10,7 @@
 
 
 missing.summary<-function(X,info2=NULL){
+  if(!is.data.frame(X)){X<-as.data.frame(X)}
   A<-plyr::ldply(.data = X, function(x){c(percentage.missing=round(mean(is.na(x)),2),count.missing=sum(is.na(x)))})
   names(A)[1]<-"COLUMN_NAME"
   if(!is.null(info2)){A<-merge(A,info2[c("COLUMN_NAME","CONSTRAINT_TYPE")],all.x=TRUE)}
