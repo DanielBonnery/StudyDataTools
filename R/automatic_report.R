@@ -5,9 +5,11 @@
 #' @param X a data frame
 #' @param info2 a data frame with two variables named c("COLUMN_NAME","CONSTRAINT_TYPE")
 #' @return a data frame
-#' @example
-#' data(churn,package="AUC");missing.summary(churn)
-
+#' @examples
+#' X=cars
+#' for(i in 1:40){
+#'   X[sample(1:50,1,replace=TRUE),sample(1:2,1,replace=TRUE)]<-NA}
+#' missing.summary(X)
 
 missing.summary<-function(X,info2=NULL){
   if(!is.data.frame(X)){X<-as.data.frame(X)}
@@ -39,6 +41,7 @@ var.summary<-function(X,datadic=NULL){
          hist=if(nl<30){ggplot2::qplot(X[[x]],xlab=x)}else{NULL},
          summary=summary(X[x])
     )})}
+
 #' Summary for each variable in table.
 #'  
 #' @details
@@ -115,11 +118,12 @@ automaticdatafConnect<-function(tablename,
 #'
 #'  
 #' @details
-#' @param 
-#' @param 
-#' @param 
-#' @param 
-#' @param 
+#' @param tableA
+#' @param tablename
+#' @param schema
+#' @param dicoT
+#' @param splitvar
+#' @param alwaysexclude
 #' @return 
 #' @examples
 #' 
@@ -166,17 +170,23 @@ automaticdataf<-function(tableA,tablename,
 #' 
 #' 
 
-
-
 lefichier<-function(x){if(file.exists(x)){x}else{NULL}}
-#'
+
+#' Creates RMD files for all datasets in a specific folder.
 #'  
 #' @details
-#' @param 
-#' @param 
-#' @param 
-#' @param 
-#' @param 
+#' @param tablename
+#' @param folder
+#' @param specialprogram
+#' @param specialreport
+#' @param specialdatafile
+#' @param automaticdatafile
+#' @param replace
+#' @param rerunspecial
+#' @param schema
+#' @param dicoT
+#' @param Connectf
+#' @param splitvar
 #' @return 
 #' @examples
 #' 

@@ -20,3 +20,9 @@ Percentage of missing for each variable
 \details{
 Percentage of missing for each variable of a data frame.
 }
+\examples{
+X=cars
+for(i in 1:40){
+  X[sample(1:50,1,replace=TRUE),sample(1:2,1,replace=TRUE)]<-NA}
+missing.summary(X)
+}
