@@ -20,7 +20,7 @@ ggplot_missing <- function(x,reordonne=FALSE){
     is.na))->x
   if(reordonne){x<-x[order(as.matrix(x*1)%*%2^(ncol(x):1)),]}
   x$rownum<-1:nrow(x)
-    ggplot(data = melt(x,id.vars="rownum"),
+    ggplot(data = reshape2::melt(x,id.vars="rownum"),
            aes(x = variable,
                y = rownum,
                fill = value)) +
