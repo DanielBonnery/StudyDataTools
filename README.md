@@ -156,5 +156,5 @@ example(missing.summary,package = "StudyDataTools",ask=FALSE)
     ## 
     ## mssng.> missing.summary(X)
     ##   COLUMN_NAME percentage.missing count.missing
-    ## 2        dist               0.34            17
-    ## 1       speed               0.36            18
+    ## 2        dist               0.28            14
+    ## 1       speed               0.38            19
