@@ -12,7 +12,8 @@
 #' for(i in 1:40){
 #'   X[sample(1:50,1,replace=TRUE),sample(1:2,1,replace=TRUE)]<-NA}
 #' ggplot_missing(X,reordonne=TRUE)
-#' ggplot_missing(X,reordonne=FALSE)createallautomaticRMD(schema="SDP")
+#' ggplot_missing(X,reordonne=FALSE)
+
  
 ggplot_missing <- function(x,reordonne=FALSE){
   rownames(x)<-NULL
