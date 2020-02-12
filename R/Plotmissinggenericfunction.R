@@ -45,10 +45,13 @@ ggplot_missing <- function(x,reordonne=FALSE){
 #' library(ggplot2)
 #' library(plyr)
 #' X=cars
+#' reordonne=TRUE
+#' keep="year"
 #' X$year=sample(2012:2017,nrow(cars),replace=TRUE)
 #' for(i in 1:40){
 #'  X[sample(1:50,1,replace=TRUE),sample(1:2,1,replace=TRUE)]<-NA}
 #' ggplot_missing2(X,keep="year")
+
 
 
 ggplot_missing2 <- function(X,reordonne=TRUE,keep=NULL){
@@ -68,7 +71,7 @@ ggplot_missing2 <- function(X,reordonne=TRUE,keep=NULL){
   x$rownum<-1:nrow(x)
   if(length(keep)!=0){
   if(is.numeric(x[[keep]])){x[[keep]]<-as.character(x[[keep]])}}
-  ggplot(data = melt(x,id.vars="rownum",measure.vars = names(x)[-match("rownum",names(x))] ),
+  ggplot(data = reshape2::melt(x,id.vars="rownum",measure.vars = names(x)[-match("rownum",names(x))] ),
          aes(x = variable,
              y = rownum)) +
     geom_tile(aes(fill = value)) +
