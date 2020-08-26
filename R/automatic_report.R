@@ -269,14 +269,14 @@ names(Frequencies)<-c('Value','Frequency')
 kable(Frequencies)}
 ```
 
-`r if(!is.null(automaticdata$varsum[['",variable,"']][['densityplot']])){"Density plot"}`
+`r if(!is.null(automaticdata$varsum[['",variable,"']][['densityplot']])){'Density plot'}`
 
 ```{r,echo=FALSE}
 x=automaticdata$varsum[['",variable,"']][['densityplot']]
 if(!is.null(x)){print(x)}
 ```
 
-`r if(!is.null(automaticdata$varsum[['",variable,"']][['hist']])){"Histogram"}`
+`r if(!is.null(automaticdata$varsum[['",variable,"']][['hist']])){'Histogram'}`
 
 ```{r,echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE}
 x=automaticdata$varsum[['",variable,"']][['hist']]
