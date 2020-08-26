@@ -84,9 +84,9 @@ automaticdatafConnect<-function(tablename,
          splitvar=NULL,
          varsum=var.summary(X),
          missingsum=missing.summary(X),
-         missinggraph=ggplot_missing(X),
+         missinggraph=ggplot_missing(X,reordonne=T),
          missinggraph2=if(any(is.element(splitvar,variables))){
-           ggplot_missing2(X,keep=setdiff(splitvar,variables))}else{NULL})
+           ggplot_missing2(X,keep=setdiff(splitvar,variables),reordonne=T)}else{NULL})
   
   automaticdatafile<-file.path(folder,paste0("study_",schema,"_",tablename,"_automatic.rda"))
   save(automaticdata,file=automaticdatafile)
@@ -127,9 +127,9 @@ automaticdataf<-function(tablename,tableA=get(tablename),
          splitvar=NULL,
          varsum=var.summary(tableA),
          missingsum=missing.summary(tableA),
-         missinggraph=ggplot_missing(tableA),
+         missinggraph=ggplot_missing(tableA,reordonne=T),
          missinggraph2=if(any(is.element(splitvar,variables))){
-           ggplot_missing2(X,keep=setdiff(splitvar,variables))
+           ggplot_missing2(X,keep=setdiff(splitvar,variables),reordonne=T)
            }else{NULL})
   
   automaticdatafile<-file.path(folder,paste0("study_",schema,"_",tablename,"_automatic.rda"))
@@ -265,7 +265,10 @@ if(!is.null(unlist(automaticdata$varsum[['",variable,"']][['counts']]))){
 Frequencies<-as.data.frame(automaticdata$varsum[['",variable,"']][['counts']])
 names(Frequencies)<-c('Value','Frequency')
 if(nrow(Frequencies)<21){
-kable(Frequencies)}else{kable(cbind(Frequencies[1:19,],data.frame(Value='Other',Frequency=sum(Frequencies$Frequencies[20:(nrow(Frequencies)-1)])],Frequencies[nrow(Frequencies),])
+kable(Frequencies)}else{kable(cbind(Frequencies[1:19,],
+                                    data.frame(Value='Other',
+                                               Frequency=sum(Frequencies$Frequencies[20:(nrow(Frequencies)-1)])),
+                                    Frequencies[nrow(Frequencies),])
 }}
 ```
 
