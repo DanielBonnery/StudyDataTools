@@ -22,48 +22,28 @@ missing.summary<-function(X,info2=NULL){
 #' Summary for each variable in table.
 #'  
 #' @details
-#' @param X a data frame
-#' @param datadic a data dictionnary
+#' @param .data a data frame
 #' @return a list
 #' @examples
 #' data(cars)
 #' var.summary(cars)
-var.summary<-function(X,datadic=NULL){
+var.summary<-function(.data){
   require(ggplot2)
-  lapply(names(X),function(x){
-    nl=length(unique(X[[x]]))
-    is.code=identical(names(table(table(X[[x]]))),"1")
+  L<-lapply(names(.data),function(x){
+    nl=length(unique(.data[[x]]))
+    is.code=identical(names(table(table(.data[[x]]))),"1")
     list(nlevels=nl,
          is.code=is.code,
-         levels=if(nl<300&!is.code){sort(unique(X[[x]]))}else{sort(unique(X[[x]])[1:300])},
-         counts=if(nl<300&!is.code){table(X[x],useNA="ifany")}else{NULL},
-         densityplot=if(is.numeric(X[[x]])&nl>30){ggplot2::ggplot(data.frame(x=X[[x]]),aes(x))+xlab(x)+ geom_density(show.legend = TRUE)}else{NULL},
-         hist=if(nl<30){ggplot2::qplot(X[[x]],xlab=x)}else{NULL},
-         summary=summary(X[x])
-    )})}
+         levels=if(nl<300&!is.code){sort(unique(.data[[x]]))}else{sort(unique(.data[[x]])[1:300])},
+         counts=if(nl<300&!is.code){table(.data[x],useNA="ifany")}else{NULL},
+         densityplot=if(is.numeric(.data[[x]])&nl>30){ggplot2::ggplot(data.frame(x=.data[[x]]),aes(x))+xlab(x)+ geom_density(show.legend = TRUE)}else{NULL},
+         hist=if(nl<30){(function(){xx=data.frame(zz=.data[[x]]);ggplot2::qplot(data=xx,x=zz,xlab=x)})()}else{NULL},
+         summary=summary(.data[x])
+    )})
+  names(L)<-names(.data)
+  L
+  }
 
-#' Summary for each variable in table.
-#'  
-#' @details
-#' @param X a data frame
-#' @param datadic a data dictionnary
-#' @return a list
-#' @examples
-#' data(cars)
-#' var.summaryConnect(cars)
-var.summaryConnect<-function(X,datadic=NULL){
-  sapply(names(X),function(x){
-    nl=length(unlist(unique(X[x])))
-    is.code=identical(names(table(table(X[[x]]))),"1")
-    list(nlevels=nl,
-         is.code=is.code,
-         levels=if(nl<300){sort(unique(X[[x]]))}else{sort(unique(X[[x]])[1:30])},
-         counts=if(nl<300&!is.code){table(X[x],useNA="ifany")}else{NULL},
-         densityplot=if(is.numeric(X[[x]])&nl>30){ggplot(data.frame(x=X[[x]]),aes(x))+xlab(x)+ geom_density(show.legend = TRUE)}else{NULL},
-         #densityplot=ggplot(X[x],aes(x= names(X[x])[1]))+geom_density(show.legend = TRUE),
-         hist=if(nl<30){qplot(X[[x]])}else{NULL},
-         summary=summary(X[x])
-    )})}
 
 #' get data about a file on the server.
 #' @details 
@@ -102,7 +82,7 @@ automaticdatafConnect<-function(tablename,
          tab1_variables=dicoT[dicoT$TABLE==tablename,],
          pk=pk,
          splitvar=NULL,
-         varsum=var.summary(X,datadic=dicoT[dicoT$TABLE==tablename,]),
+         varsum=var.summary(X),
          missingsum=missing.summary(X),
          missinggraph=ggplot_missing(X),
          missinggraph2=if(any(is.element(splitvar,variables))){
@@ -128,7 +108,7 @@ automaticdatafConnect<-function(tablename,
 #' @examples
 #' 
 #' 
-automaticdataf<-function(tableA,tablename,
+automaticdataf<-function(tablename,tableA=get(tablename),
                                 folder=getwd(),
                                 schema=NULL, 
                                 dicoT=NULL, 
@@ -137,18 +117,20 @@ automaticdataf<-function(tableA,tablename,
   
   variables<-setdiff(names(tableA),alwaysexclude)
   n<-nrow(tableA)
-  
+  splitvar=NULL
+  if(n>1000){tableA<-tableA[sample(n,1000),]}
   automaticdata<-
     list(nrow=n,
          variables=variables,
          tab1_variables=dicoT[dicoT$TABLE==tablename,],
          pk=NULL,
          splitvar=NULL,
-         varsum=var.summary(tableA,datadic=dicoT[dicoT$TABLE==tablename,]),
+         varsum=var.summary(tableA),
          missingsum=missing.summary(tableA),
          missinggraph=ggplot_missing(tableA),
          missinggraph2=if(any(is.element(splitvar,variables))){
-           ggplot_missing2(X,keep=setdiff(splitvar,variables))}else{NULL})
+           ggplot_missing2(X,keep=setdiff(splitvar,variables))
+           }else{NULL})
   
   automaticdatafile<-file.path(folder,paste0("study_",schema,"_",tablename,"_automatic.rda"))
   save(automaticdata,file=automaticdatafile)
@@ -185,26 +167,28 @@ lefichier<-function(x){if(file.exists(x)){x}else{NULL}}
 #' @param rerunspecial
 #' @param schema
 #' @param dicoT
-#' @param Connectf
 #' @param splitvar
 #' @return 
 #' @examples
-#' 
+#' tablename="cars"
+#' automaticRmd(tablename)
 #' 
 automaticRmd<-function(tablename,
                        folder=getwd(),
+                       schema=NULL,
                        specialprogram   =lefichier(file.path(folder,paste0("study_",schema,"_",tablename,"_special.R"))),
                        specialreport    =lefichier(file.path(folder,paste0("study_",schema,"_",tablename,"_special.Rmd"))),
                        specialdatafile  =lefichier(file.path(folder,paste0("study_",schema,"_",tablename,"_special.rda"))),
                        automaticdatafile=file.path(folder,paste0("study_",schema,"_",tablename,"_automatic.rda")),
-                       replace=FALSE,
+                       replace=TRUE,
                        rerunspecial=FALSE,
-                       schema=NULL,
                        dicoT=NULL,
-                       Connectf=NULL,
-                       splitvar=NULL){
+                       splitvar=NULL,
+                       alwaysexclude=NULL,
+                       dico=function(){NULL},
+                       author=""){
   
-  automaticdatafile<-automaticdataf(tablename,folder,schema=schema,splitvar=splitvar,dicoT=dicoT,Connectf=Connectf)
+  automaticdatafile<-automaticdataf(tablename=tablename,folder=folder,schema=schema,splitvar=splitvar,dicoT=dicoT)
   load(automaticdatafile)
   variables<-automaticdata$variables
   rm(automaticdata)
@@ -214,8 +198,8 @@ automaticRmd<-function(tablename,
     texte<-paste0(
 '---
 title: "Study ',tablename,'"
-author: "Daniel Bonnery"
-output: html_document
+author: "',author,'"
+output: github_document
 ---
 
 ```{r setup, include=FALSE, warnings=FALSE, error=FALSE,results="hide"}
@@ -240,7 +224,7 @@ The primary keys are `r paste(automaticdata$pk,collapse=", ")`.
 The number of potentially interesting variables  is `r length(automaticdata$variables)`.
 
 ```{r listofvar, echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE,results="hide",include=FALSE}
-dicoT=StudyMLDS::dico()   
+dicoT=dico()   
 tab1<-dicoT[dicoT$TABLE=="',tablename,'",]
 ```
 
@@ -295,22 +279,22 @@ Information:
 try(kable(dicoT[dicoT$TABLE=='",tablename,"'&dicoT$COLUMN_NAME=='",variable,"',]))
 ```
 
-Number of levels is `r automaticdata$varsum['nlevels','",variable,"']`
+Number of levels is `r automaticdata$varsum[['",variable,"']][['nlevels']]`
 
 Table of frequencies:
 ```{r,echo=FALSE}
-if(!is.null(unlist(automaticdata$varsum['counts','",variable,"']))){
-kable(as.data.frame(automaticdata$varsum['counts','",variable,"'][[1]]))}
+if(!is.null(unlist(automaticdata$varsum[['",variable,"']][['counts']]))){
+kable(as.data.frame(automaticdata$varsum[['",variable,"']][['counts']][[1]]))}
 ```
 
 Density plot
 ```{r,echo=FALSE}
-print(automaticdata$varsum['densityplot','",variable,"'])
+print(automaticdata$varsum[['",variable,"']][['densityplot']])
 ```
 
 Histogram
 ```{r,echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE}
-print(automaticdata$varsum['hist','",variable,"'])
+print(automaticdata$varsum[['",variable,"']][['hist']])
 ```
 
 ")
@@ -319,7 +303,7 @@ print(automaticdata$varsum['hist','",variable,"'])
     Rmdfile<-file.path(folder,paste0("study_",schema,"_",tablename,"_automatic.Rmd"))
     cat(texte,file=Rmdfile)
     rmarkdown::render(input = Rmdfile,
-                      output_file = paste0("study_",schema,"_",tablename,"_automatic.html"),
+                      output_file = paste0("study_",schema,"_",tablename,"_automatic.md"),
                       output_dir = folder)
   }
 }
@@ -383,7 +367,7 @@ Compare2TablesRmd<-function(tablename1,tablename2,tableA,tableB,
       The number of potentially interesting variables  is `r length(automaticdata$variables)`.
       
       ```{r listofvar, echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE,results="hide",include=FALSE}
-      dicoT=StudyMLDS::dico()   
+      dicoT=dico()   
       tab1<-dicoT[dicoT$TABLE=="',tablename,'",]
       ```
       

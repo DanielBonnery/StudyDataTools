@@ -7,6 +7,7 @@
 automaticRmd(
   tablename,
   folder = getwd(),
+  schema = NULL,
   specialprogram = lefichier(file.path(folder, paste0("study_", schema, "_", tablename,
     "_special.R"))),
   specialreport = lefichier(file.path(folder, paste0("study_", schema, "_", tablename,
@@ -15,12 +16,13 @@ automaticRmd(
     "_special.rda"))),
   automaticdatafile = file.path(folder, paste0("study_", schema, "_", tablename,
     "_automatic.rda")),
-  replace = FALSE,
+  replace = TRUE,
   rerunspecial = FALSE,
-  schema = NULL,
   dicoT = NULL,
-  Connectf = NULL,
-  splitvar = NULL
+  splitvar = NULL,
+  alwaysexclude = NULL,
+  dico = function() {     NULL },
+  author = ""
 )
 }
 \value{
@@ -30,6 +32,7 @@ automaticRmd(
 Creates RMD files for all datasets in a specific folder.
 }
 \examples{
-
+tablename="cars"
+automaticRmd(tablename)
 
 }

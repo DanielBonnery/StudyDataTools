@@ -4,12 +4,10 @@
 \alias{var.summary}
 \title{Summary for each variable in table.}
 \usage{
-var.summary(X, datadic = NULL)
+var.summary(.data)
 }
 \arguments{
-\item{X}{a data frame}
-
-\item{datadic}{a data dictionnary}
+\item{.data}{a data frame}
 }
 \value{
 a list
