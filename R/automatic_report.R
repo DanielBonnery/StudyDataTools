@@ -199,7 +199,8 @@ automaticRmd<-function(tablename,
 '---
 title: "Study ',tablename,'"
 author: "',author,'"
-output: github_document
+output: github_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE, warnings=FALSE, error=FALSE,results="hide"}
@@ -207,7 +208,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r r1, echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE,results="hide",include=FALSE}
-library("BigSyn")
+library("StudyDataTools")
 library(printr)
 library(knitr)
 load("',automaticdatafile,'")
@@ -218,9 +219,7 @@ try(load("',specialdatafile,'"))
 
 ## Quick facts
 The number of rows is `r automaticdata$nrow`.
-
-The primary keys are `r paste(automaticdata$pk,collapse=", ")`.
-
+`r if(!is.null(automaticdata$pk)){paste0("The primary keys are ",paste(automaticdata$pk,collapse=", "))}`.
 The number of variables  is `r length(automaticdata$variables)`.
 
 ```{r listofvar, echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE,results="hide",include=FALSE}
@@ -266,9 +265,8 @@ Table of frequencies:
 if(!is.null(unlist(automaticdata$varsum[['",variable,"']][['counts']]))){
 Frequencies<-as.data.frame(automaticdata$varsum[['",variable,"']][['counts']])
 names(Frequencies)<-c('Value','Frequency')
-if(nrow(Frequencies)<20){
-kable(Frequencies)}else{
-
+if(nrow(Frequencies)<21){
+kable(Frequencies)}else{kable(cbind(Frequencies[1:19,],data.frame(Value='Other',Frequency=sum(Frequencies$Frequencies[20:(nrow(Frequencies)-1)])],Frequencies[nrow(Frequencies),])
 }}
 ```
 
@@ -329,10 +327,13 @@ Compare2TablesRmd<-function(tablename1,tablename2,tableA,tableB,
     specialtexte<-if(!is.null(specialreport)){readLines(specialreport)}else{character(0)}
     texte<-paste0(
       '---
-      title: "Study ',tablename,'"
-      author: "Daniel Bonnery"
-      output: html_document
-      ---
+title: "Study ',tablename,'"
+author: "Daniel Bonnery"
+      
+output:
+  html_document:
+    df_print: paged
+---
       
       ```{r setup, include=FALSE, warnings=FALSE, error=FALSE,results="hide"}
       knitr::opts_chunk$set(echo = TRUE)
