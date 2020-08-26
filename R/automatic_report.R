@@ -199,8 +199,7 @@ automaticRmd<-function(tablename,
 '---
 title: "Study ',tablename,'"
 author: "',author,'"
-output: github_document:
-    df_print: paged
+output: github_document
 ---
 
 ```{r setup, include=FALSE, warnings=FALSE, error=FALSE,results="hide"}
