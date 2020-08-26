@@ -259,22 +259,25 @@ Information:
 ```{r, echo=FALSE,message=FALSE,warnings=FALSE}
 if(!is.null(dicoT)){try(kable(dicoT[dicoT$TABLE=='",tablename,"'&dicoT$COLUMN_NAME=='",variable,"',]))}
 ```
-
 Number of levels is `r automaticdata$varsum[['",variable,"']][['nlevels']]`
 
 Table of frequencies:
 ```{r,echo=FALSE,message=FALSE,warnings=FALSE}
 if(!is.null(unlist(automaticdata$varsum[['",variable,"']][['counts']]))){
-kable(as.data.frame(automaticdata$varsum[['",variable,"']][['counts']][[1]]))}
+Frequencies<-as.data.frame(automaticdata$varsum[['",variable,"']][['counts']])
+names(Frequencies)<-c('Value','Frequency')
+kable(Frequencies)}
 ```
 
-Density plot
+`r if(!is.null(automaticdata$varsum[['",variable,"']][['densityplot']])){"Density plot"}`
+
 ```{r,echo=FALSE}
 x=automaticdata$varsum[['",variable,"']][['densityplot']]
 if(!is.null(x)){print(x)}
 ```
 
-Histogram
+`r if(!is.null(automaticdata$varsum[['",variable,"']][['hist']])){"Histogram"}`
+
 ```{r,echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE}
 x=automaticdata$varsum[['",variable,"']][['hist']]
 if(!is.null(x)){print(x)}
@@ -350,7 +353,7 @@ Compare2TablesRmd<-function(tablename1,tablename2,tableA,tableB,
       The number of potentially interesting variables  is `r length(automaticdata$variables)`.
       
       ```{r listofvar, echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE,results="hide",include=FALSE}
-      dicoT=dico()   
+      #dicoT=dico()   
       tab1<-dicoT[dicoT$TABLE=="',tablename,'",]
       ```
       
