@@ -214,9 +214,8 @@ load("',automaticdatafile,'")
 try(load("',specialdatafile,'"))
 ```
 
-#Summary
 
-## Quick facts
+# Quick facts
 The number of rows is `r automaticdata$nrow`.
 `r if(!is.null(automaticdata$pk)){paste0("The primary keys are ",paste(automaticdata$pk,collapse=", "))}`.
 The number of variables  is `r length(automaticdata$variables)`.
