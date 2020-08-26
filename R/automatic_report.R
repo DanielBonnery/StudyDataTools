@@ -263,7 +263,7 @@ Table of frequencies:
 if(!is.null(unlist(automaticdata$varsum[['",variable,"']][['counts']]))){
 Frequencies<-as.data.frame(automaticdata$varsum[['",variable,"']][['counts']])
 names(Frequencies)<-c('Value','Frequency')
-if(nrow(Frequencies))>20){
+if(nrow(Frequencies)>20){
 Frequencies<-cbind(Frequencies[1:19,],
                   data.frame(Value='Other',
                              Frequency=sum(Frequencies$Frequencies[20:(nrow(Frequencies)-1)])),
