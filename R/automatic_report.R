@@ -118,7 +118,7 @@ automaticdataf<-function(tablename,tableA=get(tablename),
   variables<-setdiff(names(tableA),alwaysexclude)
   n<-nrow(tableA)
   splitvar=NULL
-  if(n>1000){tableA<-tableA[sample(n,1000),]}
+#  if(n>1000){tableA<-tableA[sample(n,1000),]}
   automaticdata<-
     list(nrow=n,
          variables=variables,
@@ -266,7 +266,10 @@ Table of frequencies:
 if(!is.null(unlist(automaticdata$varsum[['",variable,"']][['counts']]))){
 Frequencies<-as.data.frame(automaticdata$varsum[['",variable,"']][['counts']])
 names(Frequencies)<-c('Value','Frequency')
-kable(Frequencies)}
+if(nrow(Frequencies)<20){
+kable(Frequencies)}else{
+
+}}
 ```
 
 `r if(!is.null(automaticdata$varsum[['",variable,"']][['densityplot']])){'Density plot'}`
