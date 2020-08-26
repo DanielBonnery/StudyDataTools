@@ -214,41 +214,22 @@ load("',automaticdatafile,'")
 try(load("',specialdatafile,'"))
 ```
 
-#Summary: 
+#Summary
 
 ## Quick facts
 The number of rows is `r automaticdata$nrow`.
 
 The primary keys are `r paste(automaticdata$pk,collapse=", ")`.
 
-The number of potentially interesting variables  is `r length(automaticdata$variables)`.
+The number of variables  is `r length(automaticdata$variables)`.
 
 ```{r listofvar, echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE,results="hide",include=FALSE}
 dicoT=dico()   
 tab1<-dicoT[dicoT$TABLE=="',tablename,'",]
 ```
-
-## Key findings:
-
-## Questions:
-
-Posted on the tracking spreadsheet: 
-
-## Recommandations:
-
-Keep:
-
-Move:
-
-Replace:
-
-Drop:
 ',
 paste(specialtexte,collapse="\n")
-
 ,'
-## Percentage of missing
-
 
 #Details
 
@@ -275,26 +256,28 @@ if(!is.null(automaticdata$missinggraph2)){try(print(automaticdata$missinggraph2)
     texte<-paste0(texte,do.call(paste0,lapply(setdiff(variables,alwaysexclude), function(variable){
       paste0("### ",variable,"
 Information: 
-```{r, echo=FALSE}
-try(kable(dicoT[dicoT$TABLE=='",tablename,"'&dicoT$COLUMN_NAME=='",variable,"',]))
+```{r, echo=FALSE,message=FALSE,warnings=FALSE}
+if(!is.null(dicoT)){try(kable(dicoT[dicoT$TABLE=='",tablename,"'&dicoT$COLUMN_NAME=='",variable,"',]))}
 ```
 
 Number of levels is `r automaticdata$varsum[['",variable,"']][['nlevels']]`
 
 Table of frequencies:
-```{r,echo=FALSE}
+```{r,echo=FALSE,message=FALSE,warnings=FALSE}
 if(!is.null(unlist(automaticdata$varsum[['",variable,"']][['counts']]))){
 kable(as.data.frame(automaticdata$varsum[['",variable,"']][['counts']][[1]]))}
 ```
 
 Density plot
 ```{r,echo=FALSE}
-print(automaticdata$varsum[['",variable,"']][['densityplot']])
+x=automaticdata$varsum[['",variable,"']][['densityplot']]
+if(!is.null(x)){print(x)}
 ```
 
 Histogram
 ```{r,echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE}
-print(automaticdata$varsum[['",variable,"']][['hist']])
+x=automaticdata$varsum[['",variable,"']][['hist']]
+if(!is.null(x)){print(x)}
 ```
 
 ")
