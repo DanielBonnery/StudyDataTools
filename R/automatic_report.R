@@ -13,10 +13,16 @@
 
 missing.summary<-function(X,info2=NULL){
   if(!is.data.frame(X)){X<-as.data.frame(X)}
-  A<-plyr::ldply(.data = X, function(x){c(percentage.missing=round(mean(is.na(x)),2),count.missing=sum(is.na(x)))})
+  A<-plyr::ldply(.data = X, function(x){
+    c("missing percentage"=round(mean(is.na(x)),2),
+      "blank percentage"=round(mean(try(as.character(x))==""&!is.na(x)),2),
+      "zero percentage"=round(mean(x==0&!is.na(x)),2),
+      "missing count"=sum(is.na(x)),
+      "blank count"=sum(try(as.character(x))=="",na.rm=T),
+      "zero count"=sum(x==0,na.rm=T))})
   names(A)[1]<-"COLUMN_NAME"
   if(!is.null(info2)){A<-merge(A,info2[c("COLUMN_NAME","CONSTRAINT_TYPE")],all.x=TRUE)}
-  A[order(A$count.missing),]
+  A[order(A[[2]]),]
 }
 
 #' Summary for each variable in table.
@@ -31,15 +37,16 @@ var.summary<-function(.data){
   require(ggplot2)
   L<-lapply(names(.data),function(x){
     nl=length(unique(.data[[x]]))
-    is.code=identical(names(table(table(.data[[x]]))),"1")
+    is.code=try(identical(names(table(table(.data[[x]]))),"1"))
+    if(is.element("try-error",class(is.code))){is.code=F}
     list(nlevels=nl,
          is.code=is.code,
          levels=if(nl<300&!is.code){sort(unique(.data[[x]]))}else{sort(unique(.data[[x]])[1:300])},
          counts=if(nl<300&!is.code){table(.data[x],useNA="ifany")}else{NULL},
          densityplot=if(is.numeric(.data[[x]])&nl>30){ggplot2::ggplot(data.frame(x=.data[[x]]),aes(x))+xlab(x)+ geom_density(show.legend = TRUE)}else{NULL},
          hist=if(nl<30){(function(){xx=data.frame(zz=.data[[x]]);ggplot2::qplot(data=xx,x=zz,xlab=x)})()}else{NULL},
-         summary=summary(.data[x])
-    )})
+         summary=summary(.data[x]))
+    })
   names(L)<-names(.data)
   L
   }
@@ -191,6 +198,8 @@ automaticRmd<-function(tablename,
   automaticdatafile<-automaticdataf(tablename=tablename,folder=folder,schema=schema,splitvar=splitvar,dicoT=dicoT)
   load(automaticdatafile)
   variables<-automaticdata$variables
+  missinggraphfigheight<-length(variables)/5
+    
   rm(automaticdata)
   if(replace||!file.exists(file.path(folder,paste0("study_",schema,"_",tablename,"_automatic.Rmd")))){
     
@@ -238,7 +247,7 @@ if(automaticdata$nrow>100000){"The following is based on a sample"}else{characte
 kable(automaticdata$missingsum)
 ```
 
-``` {r missinggraph,echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE}
+``` {r missinggraph,echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE,fig.height=',  missinggraphfigheight,'}
 print(automaticdata$missinggraph)
 if(!is.null(automaticdata$missinggraph2)){try(print(automaticdata$missinggraph2))}
 ```
@@ -282,7 +291,7 @@ if(!is.null(x)){print(x)}
 
 ```{r,echo=FALSE,message=FALSE, warnings=FALSE, error=FALSE}
 x=automaticdata$varsum[['",variable,"']][['hist']]
-if(!is.null(x)){print(x)+coord_flip()}
+if(!is.null(x)){print(x+coord_flip())}
 ```
 
 ")
